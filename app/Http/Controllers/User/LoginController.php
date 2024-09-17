@@ -36,7 +36,6 @@ class LoginController extends Controller
         ]);
 
         Auth::guard('web')->login($user);
-
         return redirect()->route('home');
     }
 
@@ -65,7 +64,6 @@ class LoginController extends Controller
 
     public function logout(Request $request) {
         Auth::guard('web')->logout();
-
         return $this->loggedOut($request) ?: redirect()->route(route('/'));
     }
 

@@ -6,12 +6,11 @@ use App\Models\Url;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
+use PhpParser\Node\Stmt\Return_;
 
 class UrlController extends Controller
 {
     public function index() {
-        dd(auth('web')->user());
-        
         return view('user.index');
     }
 
@@ -39,5 +38,13 @@ class UrlController extends Controller
     public function redirect($alias) {
         $url = Url::where('shortened_alias', $alias)->firstOrFail();
         return redirect()->to($url->original_url);
+    }
+
+    public function showCustomUrlForm() {
+        return view('user.create-custom-url');
+    }
+
+    public function generateCustomUrl(Request $request) {
+        dd("Generate Custom Url");
     }
 }
