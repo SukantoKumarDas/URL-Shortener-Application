@@ -1,12 +1,11 @@
 ## About this project
 
-This is a web application developed using the Laravel(PHP) framework. The features of the application are:
+This is a web application developed using the Laravel 10 (PHP) framework. The features of the application are:
 
 - Full-fledged registration and login system for user and admin
 - When any user accesses the short link, this service will redirect to the original link.
 - Registered Users can optionally pick a custom short link for their URL.
 - Registered Users have for private URL generation.
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
 - Generated Links will expire after a standard default timespan.
 - Registered Users can specify the expiration time during link generation.
 
@@ -16,7 +15,7 @@ This is a web application developed using the Laravel(PHP) framework. The featur
 - Istall composer if not installed. Installation Link(https://www.digitalocean.com/community/tutorials/how-to-install-and-use-composer-on-ubuntu-20-04).
 - Clone this project in you local machine.
 - Create a Database named url_shortner_app.
-- Now add the database name, username and password in .end file.
+- Now add the database name, username and password in .end file like the following.
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
