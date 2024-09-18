@@ -1,4 +1,3 @@
-
 @extends('user.layouts.app')
 
 @push('footer-additional-js')

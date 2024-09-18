@@ -16,7 +16,7 @@ class Authenticate extends Middleware
 
         // Determine the guard that was triggered and set the corresponding login route
         if ($request->expectsJson()) {
-            return null;
+            return route('login');
         }
 
         // Check if the current route belongs to the admin guard

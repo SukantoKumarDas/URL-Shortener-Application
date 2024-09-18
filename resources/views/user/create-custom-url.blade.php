@@ -17,12 +17,12 @@
                         <form method="POST" action="{{ route('shorten-url') }}">
                             @csrf
                             <div class="mb-3">
-                                <label for="url" class="form-label">Enter URL:</label>
+                                <label for="url" class="form-label">Enter URL <span class="text-muted">( url to be shorten )</span> :</label>
                                 <input type="url" class="form-control" id="url" name="url" placeholder="Enter your URL" required>
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Is Private?</label>
+                                <label class="form-label">Is Private? <span class="text-muted">( only you can access )</span></label>
                                 <div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" id="privateYes" name="is_private" value="1">
@@ -59,7 +59,11 @@
 
                             <div class="mb-3" id="customUrlField">
                                 <label for="custom_url" class="form-label">Custom URL:</label>
-                                <input type="text" class="form-control" id="custom_url" name="custom_url" placeholder="Enter custom URL">
+                                <div class="input-group">
+                                    <span class="input-group-text" id="baseUrlSpan">base_url</span>
+                                    <input type="text" class="form-control" id="custom_url" name="custom_url" placeholder="Enter custom URL">
+                                </div>
+                                <div id="urlError" class="text-danger mt-2"></div>
                             </div>
 
                             <div class="mb-3">
@@ -85,6 +89,9 @@
 @push('footer-additional-js')
     <script>
         $(document).ready(function() {
+            var baseUrl = window.location.origin;
+            $('#baseUrlSpan').text(baseUrl);
+
             $('input[name="custom_yourself"]').on('change', function() {
                 if ($('#customYourselfYes').is(':checked')) {
                     $('#customUrlField').show();
@@ -99,6 +106,35 @@
             } else {
                 $('#customUrlField').hide();
             }
+            $('#urlError').text('input the custom url');
+            // check if the customurl is available or not
+            $('#custom_url').on('blur', function() {  
+                var customUrl = $(this).val();
+                $('#urlError').text('URL not available');
+                console.log();
+                // if (customUrl) {
+                //     $.ajax({
+                //         url: '/check-custom-url',  // Route to handle the URL check
+                //         method: 'POST',
+                //         data: {
+                //             _token: $('meta[name="csrf-token"]').attr('content'),  // CSRF token for security
+                //             custom_url: customUrl
+                //         },
+                //         success: function(response) {
+                //             if (response.valid) {
+                //                 $('#urlError').text('');  // Clear any previous error message
+                //             } else {
+                //                 $('#urlError').text('URL not available');  // Show error message
+                //             }
+                //         },
+                //         error: function() {
+                //             $('#urlError').text('An error occurred while checking the URL');
+                //         }
+                //     });
+                // } else {
+                //     $('#urlError').text(Iinput the custom url');
+                // }
+            });
         });
     </script>
 @endpush

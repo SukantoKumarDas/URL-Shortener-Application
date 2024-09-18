@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    protected $redirectTo = '/';
+    use AuthenticatesUsers;
+    
+    protected $redirectTo = '/admin/login';
 
     public function __construct() {
         $this->middleware('guest:admin')->except('logout');
@@ -53,7 +56,4 @@ class LoginController extends Controller
         return $this->loggedOut($request) ?: redirect()->route('admin.login');
     }
 
-    public function index() {
-        return view('admin.index');
-    }
 }

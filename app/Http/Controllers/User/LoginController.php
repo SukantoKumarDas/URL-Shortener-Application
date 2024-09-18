@@ -12,6 +12,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 class LoginController extends Controller
 {
 
+    use AuthenticatesUsers;
     protected $redirectTo = '/';
 
     public function __construct() {
@@ -25,7 +26,7 @@ class LoginController extends Controller
     public function register(Request $request) {
         $request->validate([
             'name' => 'required|string',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required',
         ]);
 
@@ -57,6 +58,8 @@ class LoginController extends Controller
 
     public function login(Request $request) {
         if ($this->validateLogin($request)) {
+            $user = User::where('email', $request->input('email'))->first();
+            Auth::login($user);
             return redirect()->route('home');
         }
         return $this->sendFailedLoginResponse($request);
@@ -64,10 +67,6 @@ class LoginController extends Controller
 
     public function logout(Request $request) {
         Auth::guard('web')->logout();
-        return $this->loggedOut($request) ?: redirect()->route(route('/'));
-    }
-
-    public function index() {
-        return view('user.index');
+        return $this->loggedOut($request) ?: redirect()->route('home');
     }
 }
