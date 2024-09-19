@@ -13,5 +13,8 @@ class Url extends Model
         'user_id',
         'original_url',
         'shortened_alias',
+        'is_private',
+        'expired_at',
+        'is_active',
     ];
 }
