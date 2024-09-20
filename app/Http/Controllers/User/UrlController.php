@@ -75,7 +75,23 @@ class UrlController extends Controller
     }
 
     public function redirect($alias) {
-        $url = Url::where('shortened_alias', $alias)->firstOrFail();
+        try {
+            $url = Url::where('shortened_alias', $alias)->firstOrFail();
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404, 'URL not found.');
+        }
+
+        if ($url->expired_at && \Carbon\Carbon::now()->greaterThan($url->expired_at)) {
+            abort(410, 'This URL has expired.');
+        }
+
+        if ($url->is_private) {
+            if (auth()->check() && auth()->id() === $url->user_id) {
+                return redirect()->to($url->original_url);
+            } else {
+                abort(403, 'Unauthorized access to this URL.');
+            }
+        }
         return redirect()->to($url->original_url);
     }
 
