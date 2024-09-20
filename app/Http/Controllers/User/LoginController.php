@@ -60,7 +60,7 @@ class LoginController extends Controller
         if ($this->validateLogin($request)) {
             $user = User::where('email', $request->input('email'))->first();
             Auth::login($user);
-            return redirect()->route('home');
+            return redirect()->route('create-custom-url');
         }
         return $this->sendFailedLoginResponse($request);
     }

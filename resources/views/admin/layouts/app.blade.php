@@ -19,20 +19,21 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Users</a>
+                        <a class="nav-link" href="{{ route('admin.user-list') }}">Users</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Links</a>
+                        <a class="nav-link" href="{{ route('admin.link-list') }}">Links</a>
                     </li>
                     @if(auth('admin')->user())
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.logout') }}"
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"
                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                Logout
-                            </a>
-                            <form id="logout-form" action="#" method="POST" class="d-none">
-                            </form>
-                        </li>
+                            Logout
+                        </a>
+                        <form id="logout-form" action="{{route('admin.logout')}}" method="POST" class="d-none">
+                            @csrf
+                        </form>
+                    </li>
                     @endif
                 </ul>
             </div>

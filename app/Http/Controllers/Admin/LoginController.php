@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,6 +43,8 @@ class LoginController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::guard('admin')->attempt($credentials)) {
+            $user = Admin::where('email', $request->input('email'))->first();
+            Auth::login($user);
             return redirect()->intended(route('admin.index'));
         }
 
@@ -52,7 +55,7 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::guard('admin')->logout();
+        Auth::guard('admin')->logout();        
         return $this->loggedOut($request) ?: redirect()->route('admin.login');
     }
 

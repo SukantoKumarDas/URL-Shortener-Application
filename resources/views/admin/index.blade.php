@@ -16,8 +16,8 @@
                 <div class="card shadow">
                     <div class="card-body">
                         <div class="w-100 text-center">
-                            <p>Total Number Of Registered Users : 100</p>
-                            <p>Total Number Of Generated Linke : 100</p>
+                            <p>Total Number Of Registered Users : {{ $number_of_user }}</p>
+                            <p>Total Number Of Generated Linke : {{ $number_of_link }}</p>
                         </div>
                     </div>
                 </div>
