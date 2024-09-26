@@ -15,6 +15,5 @@ class Url extends Model
         'shortened_alias',
         'is_private',
         'expired_at',
-        'is_active',
     ];
 }

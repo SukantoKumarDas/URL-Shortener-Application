@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('shortened_alias')->unique();
             $table->tinyInteger('is_private')->comment('0=No, 1=Yes')->default(0);
             $table->dateTime('expired_at')->nullable();
-            $table->tinyInteger('is_active')->comment('0=No, 1=Yes')->default(1);
             $table->timestamps();
             $table->softDeletes(); 
         });

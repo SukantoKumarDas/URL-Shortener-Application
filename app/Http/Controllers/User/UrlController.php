@@ -32,7 +32,6 @@ class UrlController extends Controller
         $url->shortened_alias = $alias;
         $url->is_private = 0;
         $url->expired_at = Carbon::now()->addHours(6);
-        $url->is_active = 1;
         $url->save();
 
         return redirect('/')->with('shortened_url', url($alias));
@@ -68,7 +67,6 @@ class UrlController extends Controller
         $url->shortened_alias = $alias;
         $url->is_private = $isPrivate;
         $url->expired_at = Carbon::now()->addHours($expirationTime);
-        $url->is_active = 1;
         $url->save();
 
         return response()->json(['shortened_url' => url($alias)]);
