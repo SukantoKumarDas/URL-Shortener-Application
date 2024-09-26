@@ -57,6 +57,10 @@ Then, edit the .env file to update the database credentials:
     ```bash
         php artisan migrate
 
+7. **Run the following command to install all packages**
+    ```bash
+        composer install
+
 The application will be accessible at http://127.0.0.1:8000.
 
 Admin Access
