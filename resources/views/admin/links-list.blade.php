@@ -24,6 +24,7 @@
                                     <th scope="col">Original Link</th>
                                     <th scope="col">Shortened Link</th>
                                     <th scope="col">Is Private</th>
+                                    <th scope="col">Is Soft Deleted</th>
                                     
                                 </tr>
                             </thead>
@@ -33,7 +34,7 @@
                                     <td><a href="{{ $link->original_url }}" target="_blank">{{ $link->original_url }}</a></td>
                                     <td><a href="{{ url($link->shortened_alias) }}" target="_blank">{{ url($link->shortened_alias) }}</a></td>
                                     <td>{{ $link->is_private ? 'Yes' : 'No' }}</td>
-                                    
+                                    <td>{{ $link->deleted_at == null ? 'No' : 'Yes' }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>

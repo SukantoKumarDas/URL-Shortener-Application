@@ -21,7 +21,7 @@ class HomeController extends Controller
     }
 
     public function showLinks() {
-        $links = Url::all();
+        $links = Url::withTrashed()->get();
         return view('admin.links-list', compact('links'));
     }
 }
