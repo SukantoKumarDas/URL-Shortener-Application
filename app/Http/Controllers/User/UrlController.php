@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Models\Url;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
-use Carbon\Carbon;
+use App\Services\UrlService;
 
 class UrlController extends Controller
 {
+    protected $urlService;
+
+    public function __construct(UrlService $urlService) {
+        $this->urlService = $urlService;
+    }
+    
     public function index() {
         return view('user.index');
     }
@@ -19,22 +23,9 @@ class UrlController extends Controller
             'url' => 'required|url',
         ]);
 
-        $originalUrl = $request->input('url');
-        $alias = Str::random(6); // Generate a 6-character random alias
-        
-        // Ensure alias is unique
-        while (Url::where('shortened_alias', $alias)->exists()) {
-            $alias = Str::random(6);
-        }
+        $shortenedUrl = $this->urlService->createShortenedUrl($request->input('url'));
 
-        $url = new Url();
-        $url->original_url = $originalUrl;
-        $url->shortened_alias = $alias;
-        $url->is_private = 0;
-        $url->expired_at = Carbon::now()->addHours(6);
-        $url->save();
-
-        return redirect('/')->with('shortened_url', url($alias));
+        return redirect('/')->with('shortened_url', url($shortenedUrl->shortened_alias));
     }
 
     public function customShortenUrl(Request $request) {
@@ -45,37 +36,20 @@ class UrlController extends Controller
             'is_private' => 'nullable|boolean'
         ]);
 
-        $originalUrl = $request->input('url');
-        $customAlias = $request->input('custom_alias');
-        $expirationTime = $request->input('expires_after') ?? 6;
-        $isPrivate = $request->input('is_private', 0);
+        $shortenedUrl = $this->urlService->createShortenedUrl(
+            $request->input('url'),
+            $request->input('custom_alias'),
+            $request->input('expires_after', 6),
+            $request->input('is_private', 0)
+        );
 
-        if ($customAlias) {
-            $alias = $customAlias;
-        } else {
-            $alias = Str::random(6); // Generate a 6-character random alias
-
-            // Ensure alias is unique
-            while (Url::where('shortened_alias', $alias)->exists()) {
-                $alias = Str::random(6);
-            }
-        }
-
-        $url = new Url();
-        $url->user_id = auth()->user()->id;
-        $url->original_url = $originalUrl;
-        $url->shortened_alias = $alias;
-        $url->is_private = $isPrivate;
-        $url->expired_at = Carbon::now()->addHours($expirationTime);
-        $url->save();
-
-        return response()->json(['shortened_url' => url($alias)]);
+        return response()->json(['shortened_url' => url($shortenedUrl->shortened_alias)]);
     }
 
     public function redirect($alias) {
-        try {
-            $url = Url::where('shortened_alias', $alias)->firstOrFail();
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        $url = $this->urlService->checkUrlExpiry($alias);
+
+        if (!$url) {
             abort(404, 'URL not found.');
         }
 
@@ -83,13 +57,10 @@ class UrlController extends Controller
             abort(410, 'This URL has expired.');
         }
 
-        if ($url->is_private) {
-            if (auth()->check() && auth()->id() === $url->user_id) {
-                return redirect()->to($url->original_url);
-            } else {
-                abort(403, 'Unauthorized access to this URL.');
-            }
+        if ($url->is_private && (!auth()->check() || auth()->id() !== $url->user_id)) {
+            abort(403, 'Unauthorized access to this URL.');
         }
+
         return redirect()->to($url->original_url);
     }
 
@@ -99,10 +70,8 @@ class UrlController extends Controller
 
     public function checkUrlAvailable(Request $request) {
         $alias = $request->input('custom_url');
-        if( Url::where('shortened_alias', $alias)->exists() ) {
-            return response()->json(['valid' => false]);
-        } else {
-            return response()->json(['valid' => true]);
-        }
+        $valid = !$this->urlService->checkUrlExpiry($alias);
+
+        return response()->json(['valid' => $valid]);
     }
 }
